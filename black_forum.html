@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Black Forum — форум сообщества</title>
+<style>
+:root{
+  --bg:#0b0d12;
+  --panel:#12151d;
+  --panel2:#181c26;
+  --border:#232838;
+  --accent:#2f7df6;
+  --accent2:#00c2a8;
+  --text:#e8ebf2;
+  --muted:#8b93a7;
+  --red:#e74c3c;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Roboto,Arial,sans-serif;min-height:100vh}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+
+/* Шапка */
+header{background:linear-gradient(180deg,#10131c,#0b0d12);border-bottom:2px solid var(--accent);position:sticky;top:0;z-index:100}
+.topbar{display:flex;align-items:center;justify-content:space-between;height:62px;gap:16px}
+.logo{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:800;letter-spacing:.5px}
+.logo .dot{width:12px;height:12px;background:var(--accent);border-radius:50%;box-shadow:0 0 10px var(--accent)}
+.logo span small{display:block;font-size:10px;color:var(--muted);font-weight:400;letter-spacing:2px}
+nav.mainnav{display:flex;gap:4px}
+nav.mainnav a{color:var(--muted);padding:8px 14px;border-radius:8px;font-weight:600;font-size:14px}
+nav.mainnav a:hover{color:#fff;background:#1a1f2e;text-decoration:none}
+nav.mainnav a.active{color:#fff;background:var(--accent)}
+.userbox{display:flex;gap:10px;align-items:center}
+.btn{background:var(--accent);color:#fff;border:none;padding:9px 18px;border-radius:8px;font-weight:700;cursor:pointer;font-size:14px;transition:.15s}
+.btn:hover{filter:brightness(1.15)}
+.btn.ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn.danger{background:var(--red)}
+.avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800}
+
+/* Баннер */
+.hero{background:linear-gradient(120deg,#14213d,#0b0d12 60%),radial-gradient(circle at 80% 20%,rgba(47,125,246,.35),transparent 50%);padding:34px 0;border-bottom:1px solid var(--border)}
+.hero h1{font-size:30px;margin-bottom:6px}
+.hero p{color:var(--muted)}
+.stats{display:flex;gap:26px;margin-top:18px;flex-wrap:wrap}
+.stat b{font-size:20px;display:block}
+.stat span{color:var(--muted);font-size:13px}
+
+/* Поиск */
+.searchrow{display:flex;gap:10px;margin:22px 0}
+.searchrow input{flex:1;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:11px 16px;border-radius:10px;font-size:14px;outline:none}
+.searchrow input:focus{border-color:var(--accent)}
+
+/* Разделы */
+.section{margin-bottom:28px}
+.section h2{font-size:18px;margin-bottom:12px;padding-left:12px;border-left:4px solid var(--accent)}
+table.forum{width:100%;border-collapse:collapse;background:var(--panel);border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.35)}
+table.forum th{background:var(--panel2);text-align:left;padding:11px 14px;font-size:12px;text-transform:uppercase;color:var(--muted);letter-spacing:1px}
+table.forum td{padding:13px 14px;border-top:1px solid var(--border);font-size:14px;vertical-align:middle}
+table.forum tr:hover td{background:#171b27}
+.ficon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;background:#1d2333;margin-right:4px}
+.fname{font-weight:700;color:#fff}
+.fdesc{color:var(--muted);font-size:12.5px;margin-top:3px}
+.num{color:var(--muted);text-align:center;min-width:70px}
+.lastpost{color:var(--muted);font-size:13px;min-width:190px}
+.lastpost b{color:#cfd5e4;font-weight:600}
+.online{color:var(--accent2);font-size:11px;font-weight:700}
+.badge{display:inline-block;background:var(--accent);color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:20px;margin-left:6px;vertical-align:middle}
+.badge.hot{background:var(--red)}
+
+/* Темы */
+.topicbar{display:flex;justify-content:space-between;align-items:center;margin:8px 0 14px}
+.topic{display:flex;gap:12px;padding:14px;border-bottom:1px solid var(--border);align-items:center}
+.topic:last-child{border-bottom:none}
+.ttitle{font-weight:700;color:#fff;font-size:15px}
+.tmeta{color:var(--muted);font-size:12.5px;margin-top:4px}
+.tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;background:#1d2333;color:var(--muted);margin-right:6px}
+.tag.ann{background:#3b2f0b;color:#f1c40f}
+.tcounter{text-align:center;color:var(--muted);font-size:13px;min-width:80px}
+.tcounter b{display:block;color:#fff;font-size:15px}
+
+/* Форма */
+#newtopic{display:none;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:22px}
+#newtopic input,#newtopic select,#newtopic textarea{width:100%;background:#0e111a;border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;margin-bottom:10px;font-size:14px;outline:none}
+#newtopic textarea{min-height:110px;resize:vertical}
+#newtopic label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px}
+
+/* Подвал */
+footer{border-top:1px solid var(--border);margin-top:40px;padding:26px 0;color:var(--muted);font-size:13px;text-align:center}
+footer a{margin:0 8px}
+
+/* Модалка входа */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:200}
+.modal.show{display:flex}
+.mbox{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:26px;width:340px}
+.mbox h3{margin-bottom:14px}
+.mbox input{width:100%;background:#0e111a;border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;margin-bottom:10px;outline:none}
+
+@media(max-width:720px){
+  nav.mainnav{display:none}
+  .lastpost{display:none}
+  .hero h1{font-size:22px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap topbar">
+    <div class="logo"><div class="dot"></div><span>BLACK FORUM<small>BLACK RUSSIA STYLE</small></span></div>
+    <nav class="mainnav">
+      <a href="#" class="active">Главная</a>
+      <a href="#servers">Серверы</a>
+      <a href="#topics">Актуальное</a>
+      <a href="#newtopic">Правила</a>
+    </nav>
+    <div class="userbox">
+      <button class="btn ghost" onclick="openLogin()">Вход</button>
+      <button class="btn" onclick="toggleNew()">+ Новая тема</button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>Форум сообщества <span style="color:var(--accent)">Black Forum</span></h1>
+    <p>Обсуждай серверы, ищи напарников, делись гайдами и скинами. Никнейм и статус — как в игре.</p>
+    <div class="stats">
+      <div class="stat"><b id="st-topics">128 402</b><span>тем создано</span></div>
+      <div class="stat"><b id="st-posts">1 902 774</b><span>сообщений</span></div>
+      <div class="stat"><b id="st-users">89 451</b><span>участников</span></div>
+      <div class="stat"><b id="st-online">4 217</b><span>сейчас онлайн</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="searchrow">
+    <input id="search" type="text" placeholder="Поиск по темам и разделам..." oninput="filterTopics()">
+  </div>
+
+  <section class="section" id="servers">
+    <h2>Серверы</h2>
+    <table class="forum">
+      <tr><th colspan="2">Раздел</th><th class="num">Темы</th><th class="num">Сообщения</th><th>Последнее сообщение</th></tr>
+      <tr><td><div class="ficon">🏙️</div></td><td><div class="fname">Phoenix</div><div class="fdesc">Обсуждение сервера Phoenix</div></td><td class="num">12 384</td><td class="num">183 022</td><td class="lastpost"><b>Kira_Vortex</b><br>час назад</td></tr>
+      <tr><td><div class="ficon">🌵</div></td><td><div class="fname">Tucson</div><div class="fdesc">Обсуждение сервера Tucson</div></td><td class="num">10 872</td><td class="num">162 440</td><td class="lastpost"><b>Dmitri_Sokolov</b><br>12 мин назад</td></tr>
+      <tr><td><div class="ficon">🎩</div></td><td><div class="fname">Odessa</div><div class="fdesc">Обсуждение сервера Odessa</div></td><td class="num">11 020</td><td class="num">170 558</td><td class="lastpost"><b>Anya_Rose</b><br>8 мин назад</td></tr>
+      <tr><td><div class="ficon">🔥</div></td><td><div class="fname">Rights</div><div class="fdesc">Обсуждение сервера Rights <span class="badge hot">HOT</span></div></td><td class="num">9 940</td><td class="num">154 331</td><td class="lastpost"><b>Max_Ironov</b><br>3 мин назад</td></tr>
+      <tr><td><div class="ficon">🕹️</div></td><td><div class="fname">Осады и события</div><div class="fdesc">Бизнесы, семьи, войны и ивенты серверов</div></td><td class="num">8 115</td><td class="num">96 772</td><td class="lastpost"><b>Vovan_Kaban</b><br>25 мин назад</td></tr>
+    </table>
+  </section>
+
+  <section class="section" id="topics">
+    <h2>Актуальные темы</h2>
+    <div class="topicbar">
+      <span style="color:var(--muted);font-size:13px">Найдено тем: <b id="count" style="color:#fff">5</b></span>
+      <select id="sort" onchange="filterTopics()" style="background:var(--panel2);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:8px;font-size:13px">
+        <option value="new">Сначала новые</option>
+        <option value="hot">Самые популярные</option>
+      </select>
+    </div>
+    <table class="forum">
+      <tr><th>Тема</th><th class="num">Ответы</th><th class="num">Просмотры</th><th>Автор</th></tr>
+      <tbody id="topics">
+        <tr class="trow"><td><div><span class="tag ann">Объявление</span><span class="ttitle">Обновление 4.2: новые машины и семейные войны</span><div class="tmeta">Администрация • сегодня в 18:24</div></div></td><td class="tcounter"><b>312</b>ответов</td><td class="tcounter"><b>18 402</b>просм.</td><td class="lastpost"><b>Admin_BR</b></td></tr>
+        <tr class="trow"><td><div><span class="tag">Гайд</span><span class="ttitle">Как поднять первый бизнес за 3 дня — полный разбор</span><div class="tmeta">Tucson • сегодня в 15:02</div></div></td><td class="tcounter"><b>187</b>ответов</td><td class="tcounter"><b>9 831</b>просм.</td><td class="lastpost"><b>Eugene_Boss</b></td></tr>
+        <tr class="trow"><td><div><span class="tag">Обсуждение</span><span class="ttitle">Правила RolePlay: что нельзя нарушать на Phoenix</span><div class="tmeta">Phoenix • вчера в 21:40</div></div></td><td class="tcounter"><b>94</b>ответов</td><td class="tcounter"><b>5 120</b>просм.</td><td class="lastpost"><b>Sasha_Kray</b></td></tr>
+        <tr class="trow"><td><div><span class="tag">Кланы</span><span class="ttitle">Семья «Северные Волки» набирает состав на Odessa</span><div class="tmeta">Odessa • вчера в 19:12</div></div></td><td class="tcounter"><b>76</b>ответов</td><td class="tcounter"><b>4 018</b>просм.</td><td class="lastpost"><b>Nikita_Frost</b></td></tr>
+        <tr class="trow"><td><div><span class="tag">Баги</span><span class="ttitle">Дюп предметов: как сообщить и не получить бан</span><div class="tmeta">Rights • 2 дня назад</div></div></td><td class="tcounter"><b>58</b>ответов</td><td class="tcounter"><b>3 477</b>просм.</td><td class="lastpost"><b>Moderator_R</b></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="section" id="newtopic-form-sec">
+    <h2>Создать тему</h2>
+    <div id="newtopic">
+      <label>Раздел</label>
+      <select id="t-section">
+        <option>Phoenix</option><option>Tucson</option><option>Odessa</option><option>Rights</option><option>Обсуждение</option><option>Гайд</option>
+      </select>
+      <label>Заголовок</label>
+      <input id="t-title" placeholder="Например: Ищу напарников на бизнес">
+      <label>Сообщение</label>
+      <textarea id="t-body" placeholder="Опиши тему подробно..."></textarea>
+      <button class="btn" onclick="postTopic()">Опубликовать</button>
+      <button class="btn ghost" onclick="toggleNew()">Отмена</button>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <a href="#">Правила</a> <a href="#">Поддержка</a> <a href="#">Discord</a> <a href="#">Telegram</a>
+    <div style="margin-top:10px">© 2026 Black Forum. Фан-проект в стиле форумов игровых сообществ. Не связан с оригиналом.</div>
+  </div>
+</footer>
+
+<div class="modal" id="login" onclick="if(event.target===this)closeLogin()">
+  <div class="mbox">
+    <h3>Вход на форум</h3>
+    <input id="l-nick" placeholder="Никнейм в игре">
+    <input id="l-pass" type="password" placeholder="Пароль">
+    <button class="btn" style="width:100%" onclick="doLogin()">Войти</button>
+    <button class="btn ghost" style="width:100%;margin-top:8px" onclick="closeLogin()">Закрыть</button>
+  </div>
+</div>
+
+<script>
+const counters = { topics: 128402, posts: 1902774, users: 89451, online: 4217 };
+function fmt(n){return n.toLocaleString('ru-RU').replace(/,/g,' ');}
+setInterval(()=>{counters.online += Math.floor(Math.random()*11)-5; document.getElementById('st-online').textContent = fmt(counters.online);}, 3000);
+
+function openLogin(){document.getElementById('login').classList.add('show');}
+function closeLogin(){document.getElementById('login').classList.remove('show');}
+function doLogin(){
+  const nick=document.getElementById('l-nick').value.trim();
+  if(!nick){alert('Введи ник');return;}
+  localStorage.setItem('bf-nick',nick);
+  document.querySelectorAll('.userbox').forEach(b=>b.innerHTML='<div class="avatar">'+nick[0].toUpperCase()+'</div><span style="font-weight:700">'+nick+'</span><button class="btn ghost" onclick="logout()">Выйти</button>');
+  closeLogin();
+}
+function logout(){localStorage.removeItem('bf-nick');location.reload();}
+(function(){const n=localStorage.getItem('bf-nick');if(n)doLogin.call(null)&&0; if(n){const b=document.querySelector('.userbox');b.innerHTML='<div class="avatar">'+n[0].toUpperCase()+'</div><span style="font-weight:700">'+n+'</span><button class="btn ghost" onclick="logout()">Выйти</button>';}})();
+
+function toggleNew(){const f=document.getElementById('newtopic');f.style.display=f.style.display==='block'?'none':'block';f.scrollIntoView({behavior:'smooth'});}
+
+function postTopic(){
+  const sec=document.getElementById('t-section').value;
+  const title=document.getElementById('t-title').value.trim();
+  const nick=localStorage.getItem('bf-nick')||'Гость';
+  if(!title){alert('Нужен заголовок');return;}
+  const tr=document.createElement('tr');
+  tr.className='trow';
+  tr.innerHTML='<td><div><span class="tag">'+sec+'</span><span class="ttitle">'+title.replace(/</g,'&lt;')+'</span><div class="tmeta">'+nick+' • только что</div></div></td><td class="tcounter"><b>0</b>ответов</td><td class="tcounter"><b>1</b>просм.</td><td class="lastpost"><b>'+nick+'</b></td></tr>';
+  const list=document.getElementById('topics');
+  const sort=document.getElementById('sort').value;
+  if(sort==='new') list.insertBefore(tr,list.firstChild); else list.appendChild(tr);
+  counters.topics++; document.getElementById('st-topics').textContent=fmt(counters.topics);
+  document.getElementById('t-title').value='';document.getElementById('t-body').value='';
+  toggleNew();
+}
+
+function filterTopics(){
+  const q=document.getElementById('search').value.toLowerCase();
+  const rows=document.querySelectorAll('.trow');
+  let n=0;
+  rows.forEach(r=>{const ok=r.textContent.toLowerCase().includes(q);r.style.display=ok?'':'none';if(ok)n++;});
+  document.getElementById('count').textContent=n;
+}
+</script>
+</body>
+</html>
